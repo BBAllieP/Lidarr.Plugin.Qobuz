@@ -10,13 +10,12 @@ on:
 
   workflow_dispatch:
 
-permissions: 
+permissions:
   contents: write
 
 env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
   DOTNET_CLI_TELEMETRY_OPTOUT: true
-
   PLUGIN_NAME: Lidarr.Plugin.Qobuz
   PLUGIN_VERSION: 10.1.0.${{ github.run_number }}
   MINIMUM_LIDARR_VERSION: 3.0.0.4855
@@ -49,11 +48,7 @@ jobs:
 
       - name: Update Version Info
         run: |
-          if [ "${GITHUB_REF_NAME}" = "main" ]; then
-            VERSION="${PLUGIN_VERSION}"
-          else
-            VERSION="10.1.0.${{ github.run_number }}"
-          fi
+          VERSION="${PLUGIN_VERSION}"
 
           sed -i'' -e "s/<AssemblyVersion>[0-9.*]\+<\/AssemblyVersion>/<AssemblyVersion>$VERSION<\/AssemblyVersion>/g" src/Directory.Build.props
 
@@ -98,8 +93,8 @@ jobs:
         if: github.ref == 'refs/heads/fix-special-characters-in-api-call'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: "dev-${{ github.run_number }}"
-          name: "Development build ${{ github.run_number }}"
+          tag_name: ${{ env.PLUGIN_VERSION }}
+          name: "Development build ${{ env.PLUGIN_VERSION }}"
           body: |
             Development build from branch:
 
