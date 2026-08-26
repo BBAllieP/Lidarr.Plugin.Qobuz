@@ -49,7 +49,7 @@ jobs:
           if [ "${GITHUB_REF_NAME}" = "main" ]; then
             VERSION="${PLUGIN_VERSION}"
           else
-            VERSION="10.1.0-dev.${{ github.run_number }}"
+            VERSION="10.1.0.${{ github.run_number }}"
           fi
 
           sed -i'' -e "s/<AssemblyVersion>[0-9.*]\+<\/AssemblyVersion>/<AssemblyVersion>$VERSION<\/AssemblyVersion>/g" src/Directory.Build.props
