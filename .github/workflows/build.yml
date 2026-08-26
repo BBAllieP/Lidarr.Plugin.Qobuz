@@ -78,19 +78,19 @@ jobs:
         run: cat changelog.txt
 
       - name: Install 7zip
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/fix-special-characters-in-api-call'
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
         run: |
           sudo apt update
           sudo apt install -y p7zip-full
 
       - name: Zip Plugin
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/fix-special-characters-in-api-call'
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
         run: |
           7z a -tzip "${PLUGIN_NAME}.net8.0.zip" \
             "./_plugins/net8.0/${PLUGIN_NAME}/${PLUGIN_NAME}.*"
 
       - name: Create Development Release
-        if: github.ref == 'refs/heads/fix-special-characters-in-api-call'
+        if: github.ref == 'refs/heads/develop'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: "${{ github.ref_name }}"
