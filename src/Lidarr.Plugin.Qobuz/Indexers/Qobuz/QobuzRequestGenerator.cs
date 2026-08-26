@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Net;
 using NLog;
 using NzbDrone.Common.Http;
 using NzbDrone.Core.IndexerSearch.Definitions;
@@ -26,8 +27,12 @@ namespace NzbDrone.Core.Indexers.Qobuz
         public IndexerPageableRequestChain GetSearchRequests(AlbumSearchCriteria searchCriteria)
         {
             var chain = new IndexerPageableRequestChain();
+            var artist = EncodeQueryPart(searchCriteria.ArtistQuery);
+            var album = EncodeQueryPart(searchCriteria.AlbumTitle);
+            
+            var query = $"{artist}+{album}";
 
-            chain.AddTier(GetRequests($"{searchCriteria.ArtistQuery} {searchCriteria.AlbumQuery}"));
+            chain.AddTier(GetRequests(query));
 
             return chain;
         }
@@ -36,11 +41,19 @@ namespace NzbDrone.Core.Indexers.Qobuz
         {
             var chain = new IndexerPageableRequestChain();
 
-            chain.AddTier(GetRequests(searchCriteria.ArtistQuery));
+            chain.AddTier(GetRequests(EncodeQueryPart(searchCriteria.ArtistQuery)));
 
             return chain;
         }
 
+        private static string EncodeQueryPart(string value)
+        {
+            value = value
+                .Replace("’", "'")
+                .Replace("‘", "'")
+                .Replace("ʼ", "'");
+            return WebUtility.UrlEncode(value);
+        }
         private IEnumerable<IndexerRequest> GetRequests(string searchParameters)
         {
             // make sure we are logged in and have valid credentials
@@ -59,7 +72,10 @@ namespace NzbDrone.Core.Indexers.Qobuz
                     ["offset"] = $"{page * PageSize}",
                 };
 
-                var url = QobuzAPI.Instance!.GetAPIUrl("/album/search", data);
+                var url = QobuzAPI.Instance!.GetAPIUrl(
+                    "/album/search",
+                    data,
+                    parametersAlreadyEncoded: true);
                 var req = new IndexerRequest(url, HttpAccept.Json);
                 req.HttpRequest.Method = System.Net.Http.HttpMethod.Get;
                 req.HttpRequest.Headers.Add("X-App-ID", $"{QobuzAPI.Instance.Client.AppId}");

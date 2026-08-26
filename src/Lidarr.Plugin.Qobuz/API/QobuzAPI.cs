@@ -69,21 +69,29 @@ public class QobuzAPI
         _login = _client.LoginWithToken(userId, userAuthToken);
     }
 
-    public string GetAPIUrl(string method, Dictionary<string, string> parameters = null)
-    {
-        parameters ??= [];
-
-        StringBuilder stringBuilder = new("https://www.qobuz.com/api.json/0.2");
-        stringBuilder.Append(method);
-        for (var i = 0; i < parameters.Count; i++)
+    public string GetAPIUrl(
+        string method,
+        Dictionary<string, string> parameters = null,
+        bool parametersAlreadyEncoded = false)
         {
-            var start = i == 0 ? "?" : "&";
-            var key = WebUtility.UrlEncode(parameters.ElementAt(i).Key);
-            var value = WebUtility.UrlEncode(parameters.ElementAt(i).Value);
-            stringBuilder.Append(start + key + "=" + value);
+            parameters ??= [];
+        
+            StringBuilder stringBuilder = new("https://www.qobuz.com/api.json/0.2");
+            stringBuilder.Append(method);
+        
+            for (var i = 0; i < parameters.Count; i++)
+            {
+                var start = i == 0 ? "?" : "&";
+                var key = WebUtility.UrlEncode(parameters.ElementAt(i).Key);
+                var value = parametersAlreadyEncoded
+                    ? parameters.ElementAt(i).Value
+                    : WebUtility.UrlEncode(parameters.ElementAt(i).Value);
+        
+                stringBuilder.Append(start + key + "=" + value);
+            }
+        
+            return stringBuilder.ToString();
         }
-        return stringBuilder.ToString();
-    }
 }
 
 public enum AudioQuality
