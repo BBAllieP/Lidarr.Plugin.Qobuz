@@ -54,7 +54,7 @@ namespace NzbDrone.Core.Indexers.Qobuz
             {
                 var data = new Dictionary<string, string>()
                 {
-                    ["query"] = searchParameters,
+                    ["query"] = Uri.EscapeDataString(searchParameters),
                     ["limit"] = $"{PageSize}",
                     ["offset"] = $"{page * PageSize}",
                 };
