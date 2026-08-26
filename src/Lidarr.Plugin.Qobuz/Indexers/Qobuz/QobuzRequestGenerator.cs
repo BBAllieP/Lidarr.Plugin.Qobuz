@@ -27,7 +27,7 @@ namespace NzbDrone.Core.Indexers.Qobuz
         {
             var chain = new IndexerPageableRequestChain();
 
-            chain.AddTier(GetRequests($"{Uri.EscapeDataString(searchCriteria.ArtistQuery)} {Uri.EscapeDataString(searchCriteria.AlbumQuery}"));
+            chain.AddTier(GetRequests($"{Uri.EscapeDataString(searchCriteria.ArtistQuery)} {Uri.EscapeDataString(searchCriteria.AlbumQuery)}"));
 
             return chain;
         }
