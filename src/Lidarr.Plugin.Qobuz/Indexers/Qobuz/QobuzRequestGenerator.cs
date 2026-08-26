@@ -26,14 +26,10 @@ namespace NzbDrone.Core.Indexers.Qobuz
         public IndexerPageableRequestChain GetSearchRequests(AlbumSearchCriteria searchCriteria)
         {
             var chain = new IndexerPageableRequestChain();
-            var artist = EncodeLiteralPlus(searchCriteria.ArtistQuery);
-            var album = EncodeLiteralPlus(searchCriteria.AlbumTitle);
-        
+            var artist = EncodeQueryPart(searchCriteria.ArtistQuery);
+            var album = EncodeQueryPart(searchCriteria.AlbumTitle);
+            
             var query = $"{artist}+{album}";
-            if (!string.IsNullOrWhiteSpace(searchCriteria.Disambiguation))
-            {
-                query += $"+{EncodeLiteralPlus(searchCriteria.Disambiguation)}";
-            }
 
             chain.AddTier(GetRequests(query));
 
@@ -51,6 +47,10 @@ namespace NzbDrone.Core.Indexers.Qobuz
         private static string EncodeLiteralPlus(string value)
         {
             return value.Replace("+", "%2B");
+        }
+        private static string EncodeQueryPart(string value)
+        {
+            return WebUtility.UrlEncode(value);
         }
         private IEnumerable<IndexerRequest> GetRequests(string searchParameters)
         {
@@ -70,7 +70,10 @@ namespace NzbDrone.Core.Indexers.Qobuz
                     ["offset"] = $"{page * PageSize}",
                 };
 
-                var url = QobuzAPI.Instance!.GetAPIUrl("/album/search", data);
+                var url = QobuzAPI.Instance!.GetAPIUrl(
+                    "/album/search",
+                    data,
+                    parametersAlreadyEncoded: true);
                 var req = new IndexerRequest(url, HttpAccept.Json);
                 req.HttpRequest.Method = System.Net.Http.HttpMethod.Get;
                 req.HttpRequest.Headers.Add("X-App-ID", $"{QobuzAPI.Instance.Client.AppId}");
