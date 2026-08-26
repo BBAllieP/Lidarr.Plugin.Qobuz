@@ -41,16 +41,17 @@ namespace NzbDrone.Core.Indexers.Qobuz
         {
             var chain = new IndexerPageableRequestChain();
 
-            chain.AddTier(GetRequests(EncodeLiteralPlus(searchCriteria.ArtistQuery)));
+            chain.AddTier(GetRequests(EncodeQueryPart(searchCriteria.ArtistQuery)));
 
             return chain;
         }
-        private static string EncodeLiteralPlus(string value)
-        {
-            return value.Replace("+", "%2B");
-        }
+
         private static string EncodeQueryPart(string value)
         {
+            value = value
+                .Replace("’", "'")
+                .Replace("‘", "'")
+                .Replace("ʼ", "'");
             return WebUtility.UrlEncode(value);
         }
         private IEnumerable<IndexerRequest> GetRequests(string searchParameters)
