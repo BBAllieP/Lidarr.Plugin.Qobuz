@@ -30,7 +30,7 @@ namespace NzbDrone.Core.Indexers.Qobuz
             var album = EncodeQueryPart(searchCriteria.AlbumTitle);
         
             var query = $"{artist}+{album}";
-            if (!searchCriteria.Disambiguation.IsNullOrWhiteSpace())
+            if (!string.IsNullOrWhiteSpace(searchCriteria.Disambiguation))
             {
                 query += $"+{EncodeQueryPart(searchCriteria.Disambiguation)}";
             }
