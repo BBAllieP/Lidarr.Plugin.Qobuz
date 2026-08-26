@@ -26,13 +26,13 @@ namespace NzbDrone.Core.Indexers.Qobuz
         public IndexerPageableRequestChain GetSearchRequests(AlbumSearchCriteria searchCriteria)
         {
             var chain = new IndexerPageableRequestChain();
-            var artist = EncodeQueryPart(searchCriteria.ArtistQuery);
-            var album = EncodeQueryPart(searchCriteria.AlbumTitle);
+            var artist = EncodeLiteralPlus(searchCriteria.ArtistQuery);
+            var album = EncodeLiteralPlus(searchCriteria.AlbumTitle);
         
             var query = $"{artist}+{album}";
             if (!string.IsNullOrWhiteSpace(searchCriteria.Disambiguation))
             {
-                query += $"+{EncodeQueryPart(searchCriteria.Disambiguation)}";
+                query += $"+{EncodeLiteralPlus(searchCriteria.Disambiguation)}";
             }
 
             chain.AddTier(GetRequests(query));
@@ -44,14 +44,13 @@ namespace NzbDrone.Core.Indexers.Qobuz
         {
             var chain = new IndexerPageableRequestChain();
 
-            chain.AddTier(GetRequests(EncodeQueryPart(searchCriteria.ArtistQuery)));
+            chain.AddTier(GetRequests(EncodeLiteralPlus(searchCriteria.ArtistQuery)));
 
             return chain;
         }
-        private static string EncodeQueryPart(string value)
+        private static string EncodeLiteralPlus(string value)
         {
-            return Uri.EscapeDataString(value)
-                .Replace("%20", "+");
+            return value.Replace("+", "%2B");
         }
         private IEnumerable<IndexerRequest> GetRequests(string searchParameters)
         {
