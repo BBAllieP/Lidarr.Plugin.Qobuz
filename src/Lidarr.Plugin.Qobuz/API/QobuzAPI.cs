@@ -79,7 +79,7 @@ public class QobuzAPI
         {
             var start = i == 0 ? "?" : "&";
             var key = WebUtility.UrlEncode(parameters.ElementAt(i).Key);
-            var value = WebUtility.UrlEncode(parameters.ElementAt(i).Value);
+            var value = WebUtility.UrlEncode(parameters.ElementAt(i).Value).Replace("%2B", "+");;
             stringBuilder.Append(start + key + "=" + value);
         }
         return stringBuilder.ToString();
