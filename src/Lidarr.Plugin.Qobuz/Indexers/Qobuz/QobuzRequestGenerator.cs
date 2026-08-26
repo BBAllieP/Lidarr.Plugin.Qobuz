@@ -27,7 +27,7 @@ namespace NzbDrone.Core.Indexers.Qobuz
         {
             var chain = new IndexerPageableRequestChain();
 
-            chain.AddTier(GetRequests($"{searchCriteria.ArtistQuery} {searchCriteria.AlbumQuery}"));
+            chain.AddTier(GetRequests($"{Uri.EscapeDataString(searchCriteria.ArtistQuery)} {Uri.EscapeDataString(searchCriteria.AlbumQuery}"));
 
             return chain;
         }
@@ -36,7 +36,7 @@ namespace NzbDrone.Core.Indexers.Qobuz
         {
             var chain = new IndexerPageableRequestChain();
 
-            chain.AddTier(GetRequests(searchCriteria.ArtistQuery));
+            chain.AddTier(GetRequests(Uri.EscapeDataString(searchCriteria.ArtistQuery)));
 
             return chain;
         }
@@ -54,7 +54,7 @@ namespace NzbDrone.Core.Indexers.Qobuz
             {
                 var data = new Dictionary<string, string>()
                 {
-                    ["query"] = Uri.EscapeDataString(searchParameters),
+                    ["query"] = searchParameters,
                     ["limit"] = $"{PageSize}",
                     ["offset"] = $"{page * PageSize}",
                 };
