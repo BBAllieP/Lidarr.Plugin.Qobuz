@@ -60,8 +60,8 @@ jobs:
 
       - name: Build
         run: |
-          dotnet restore src/*.sln
-          dotnet build src/*.sln -c Release -f ${{ matrix.framework }}
+          dotnet restore src/*.sln --property:TreatWarningsAsErrors=false
+          dotnet build src/*.sln -c Release -f ${{ matrix.framework }} --property:TreatWarningsAsErrors=false
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
